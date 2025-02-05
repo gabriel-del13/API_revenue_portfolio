@@ -1,0 +1,8 @@
+# Ignorar archivos compilados
+*.exe
+
+# Ignorar carpetas específicas
+.vscode/
+
+# Ignorar archivos sensibles
+.env
