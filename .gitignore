@@ -1,5 +1,6 @@
 # Ignorar archivos compilados
 *.exe
+db digram.png
 
 # Ignorar carpetas específicas
 .vscode/

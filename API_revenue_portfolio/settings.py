@@ -43,12 +43,16 @@ DJANGO_ALLAUTH = [
     'allauth.socialaccount',
     'django.contrib.sites'
 ]
-
-REST_FRAMEWORK = [
+REST_FRAMEWORKAPP = [
     'rest_framework',
 ]
+APPS = [
+    'users',
+    'wallets',
+    'expenses',
+]
 
-INSTALLED_APPS = DJANGO_BASE + DJANGO_ALLAUTH + REST_FRAMEWORK
+INSTALLED_APPS = DJANGO_BASE + DJANGO_ALLAUTH + REST_FRAMEWORKAPP + APPS
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -96,7 +100,7 @@ WSGI_APPLICATION = 'API_revenue_portfolio.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'revenue_portfolio_db',
         'USER': 'leif13',
         'PASSWORD': '1234',
         'HOST': 'localhost',
