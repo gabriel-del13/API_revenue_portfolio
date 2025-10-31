@@ -7,4 +7,5 @@ db digram.png
 
 # Ignorar archivos sensibles
 .env
+.dockerignore
 readme_example.md

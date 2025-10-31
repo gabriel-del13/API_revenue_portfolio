@@ -4,5 +4,5 @@ from .models import Wallet
 class WalletSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['id', 'client', 'balance']
+        fields = ['id', 'name', 'balance']
         read_only_fields = ['id']

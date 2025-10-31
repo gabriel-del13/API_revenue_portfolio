@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-+_ct=&^3+$)ckd=^rby(a_+&=ul&6h)i%_gj4$t@1-s#-jw_+%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -44,7 +45,7 @@ DJANGO_ALLAUTH = [
     'django.contrib.sites'
 ]
 REST_FRAMEWORKAPP = [
-    'rest_framework',
+    'rest_framework'
 ]
 APPS = [
     'users',
@@ -52,7 +53,12 @@ APPS = [
     'expenses',
 ]
 
-INSTALLED_APPS = DJANGO_BASE + DJANGO_ALLAUTH + REST_FRAMEWORKAPP + APPS
+SWAGGER_APPS =  [
+    'drf_yasg',
+]
+
+
+INSTALLED_APPS = DJANGO_BASE + DJANGO_ALLAUTH + REST_FRAMEWORKAPP + APPS + SWAGGER_APPS
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -100,14 +106,11 @@ WSGI_APPLICATION = 'API_revenue_portfolio.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'revenue_portfolio_db',
-        'USER': 'leif13',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'OPTIONS': {
-            'client_encoding': 'UTF8', 
-        },
+        'NAME': os.environ.get('POSTGRES_DB',),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'db'), 
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 
@@ -153,3 +156,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
