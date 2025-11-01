@@ -1,0 +1,20 @@
+# Ignorar archivos compilados
+*.exe
+db digram.png
+
+# Ignorar carpetas específicas
+.vscode/
+
+# Ignorar archivos sensibles
+.env
+.dockerignore
+readme_example.md
+
+# Ignorar archivos de cache
+**/__pycache__/
+__pycache__/
+**/migrations/
+*.pyc
+
+# Ignorar scripts de entrada de Docker
+docker-entrypoint.sh
