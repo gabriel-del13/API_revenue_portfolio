@@ -15,6 +15,3 @@ readme_example.md
 __pycache__/
 **/migrations/
 *.pyc
-
-# Ignorar scripts de entrada de Docker
-docker-entrypoint.sh
