@@ -9,3 +9,7 @@ db digram.png
 .env
 .dockerignore
 readme_example.md
+
+# Ignorar archivos de cache
+__pycache__/
+*.pyc
