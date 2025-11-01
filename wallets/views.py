@@ -71,15 +71,21 @@ class WalletViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
         
-        if instance.expenses.exists():
-            return Response(
-                {"error": "Cannot delete wallet with existing expenses"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        wallet_name = str(instance) 
         
+        if force_delete:
+            instance.expenses.all().delete()
+            confirmation_message = f"Wallet '{wallet_name}' and all associated expenses were successfully deleted."
+        else:
+            confirmation_message = f"Wallet '{wallet_name}' was successfully deleted."
+
         self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
+        
+        return Response(
+            {"message": confirmation_message}, 
+            status=status.HTTP_200_OK 
+        )
+        
     @action(detail=True, methods=['post'])
     def add_balance(self, request, pk=None):
         wallet = self.get_object()
