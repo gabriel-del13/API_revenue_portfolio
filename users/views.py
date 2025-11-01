@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from .models import Client
-from .serializers import UserRegistrationSerializer, ClientSerializer
+from .serializers import UserRegistrationSerializer, ClientWithWalletsSerializer
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -23,7 +23,7 @@ def register(request):
 def my_profile(request):
     try:
         client = Client.objects.get(email=request.user.email)
-        serializer = ClientSerializer(client)
+        serializer = ClientWithWalletsSerializer(client)
         return Response(serializer.data)
     except Client.DoesNotExist:
         return Response(
