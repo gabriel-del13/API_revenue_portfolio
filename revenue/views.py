@@ -12,6 +12,8 @@ class RevenueViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Wallet.objects.none()
         try:
             client = Client.objects.get(email=self.request.user.email)
             queryset = Revenue.objects.filter(client=client, is_deleted=False)
