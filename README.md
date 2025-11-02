@@ -11,12 +11,15 @@ API REST construida con Django y Django REST Framework que permite a los usuario
 - ✅ Autenticación JWT
 - ✅ Gestión de usuarios
 - ✅ Múltiples billeteras por usuario
+- ✅ Transferencia entre billeteas
 - ✅ Registro de ingresos
 - ✅ Seguimiento de gastos
 - ✅ Panel de administración
 - ✅ Filtrado por billetera
 - ✅ Actualización de balance automática
+- ✅ Dashboard 
 - ✅ Dockerizado con Docker Compose
+
 
 ## 🛠️ Tecnologías
 
@@ -244,6 +247,24 @@ Las billeteras almacenan el balance del usuario. Pueden crear múltiples billete
 }
 ```
 
+### Transferir saldo entre billeteras
+- **Endpoint:** `/wallets/{id}/transfer/`
+- **Método:** `POST`
+- **Header:** `Authorization: Bearer <token>`
+- **Body:**
+```json
+{
+  "to_wallet": 2,
+  "amount": 10.00,
+  "description": "Ahorro mensual"
+}
+```
+
+### Ver historial de transferencias
+- **Endpoint:** `/wallets/{id}/transfers/`
+- **Método:** `GET`
+- **Header:** `Authorization: Bearer <token>`
+
 ### Eliminar billetera
 - **Endpoint:** `/wallets/{id}/`
 - **Método:** `DELETE`
@@ -343,7 +364,9 @@ Registra los gastos del usuario. Al crear un gasto, **automáticamente descuenta
 - **Header:** `Authorization: Bearer <token>`
 > ⚠️ **Nota:** Al eliminar, se devuelve el monto al balance de la billetera.
 
-## 5. **Admin Panel (Solo Administradores)**
+## 5. **Dashboard**
+
+## 6. **Admin Panel (Solo Administradores)**
 
 Endpoints especiales para administradores del sistema.
 

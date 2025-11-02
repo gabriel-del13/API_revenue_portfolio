@@ -123,7 +123,6 @@ class WalletViewSet(viewsets.ModelViewSet):
             
     @action(detail=True, methods=['post'])
     def transfer(self, request, pk=None):
-        """Transferir dinero de esta wallet a otra wallet del mismo usuario"""
         from_wallet = self.get_object()
         
         try:
@@ -204,19 +203,25 @@ class WalletViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
     
-    @action(detail=False, methods=['get'])
-    def transfers(self, request):
-        """Ver historial de todas las transferencias del usuario"""
+
+    @action(detail=True, methods=['get']) 
+    def transfers(self, request, pk=None):
         try:
-            client = Client.objects.get(email=request.user.email)
+            try:
+                target_wallet = self.get_object()
+                wallet_id = target_wallet.id
+            except Exception:
+                return Response(
+                    {"error": "Wallet not found or not accessible"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+                
+            client = target_wallet.client 
             transfers = Transfer.objects.filter(client=client).order_by('-transfer_date')
             
-            # Filtrar por wallet específica si se proporciona
-            wallet_id = request.query_params.get('wallet_id', None)
-            if wallet_id:
-                transfers = transfers.filter(
-                    models.Q(from_wallet_id=wallet_id) | models.Q(to_wallet_id=wallet_id)
-                )
+            transfers = transfers.filter(
+                models.Q(from_wallet_id=wallet_id) | models.Q(to_wallet_id=wallet_id)
+            )
             
             serializer = TransferSerializer(transfers, many=True)
             return Response(serializer.data)
@@ -225,4 +230,9 @@ class WalletViewSet(viewsets.ModelViewSet):
             return Response(
                 {"error": "Client profile not found"},
                 status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
