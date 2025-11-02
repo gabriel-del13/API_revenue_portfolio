@@ -18,7 +18,7 @@ if os.path.exists(env_file):
     environ.Env.read_env(env_file)
 
 # Load environment variables
-SECRET_KEY = env('SECRET_KEY') 
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-temp-key-for-build-only')
 DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])
 

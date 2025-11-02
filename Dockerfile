@@ -22,12 +22,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copia el código de la aplicación
 COPY . .
 
-# Recolecta archivos estáticos
-RUN python manage.py collectstatic --no-input
+# Crea el directorio para archivos estáticos
+RUN mkdir -p /app/staticfiles
 
 # Expone el puerto
 EXPOSE 8000
 
-# Script de inicio que ejecuta migraciones y luego inicia gunicorn
-CMD python manage.py migrate && \
+# Script de inicio: collectstatic, migraciones y luego gunicorn
+CMD python manage.py collectstatic --no-input && \
+    python manage.py migrate && \
     gunicorn API_revenue_portfolio.wsgi:application --bind 0.0.0.0:8000 --workers 2
