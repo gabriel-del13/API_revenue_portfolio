@@ -19,7 +19,7 @@ class ClientWithWalletsSerializer(serializers.ModelSerializer):
         return list(wallets)
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, min_length=8)
     
     class Meta:
         model = User
@@ -33,7 +33,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
         Client.objects.create(
             name=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']  # DEV NOTE: Storing plain passwords is insecure
+            email=validated_data['email']
         )
         return user

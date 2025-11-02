@@ -67,7 +67,7 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Agregar WhiteNoise
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -163,6 +163,13 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
+if DEBUG:
+    # En desarrollo, muestra emails en consola
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    # En producción, usa un servicio real o desactiva
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Configuraciones de seguridad para producción
 if not DEBUG:
