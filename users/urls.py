@@ -5,7 +5,8 @@ from .views import (
     my_profile, 
     list_all_users, 
     delete_user, 
-    change_user_password
+    change_user_password,
+    dashboard
 )
 
 urlpatterns = [
@@ -21,4 +22,7 @@ urlpatterns = [
     path('admin/', list_all_users, name='list_all_users'),
     path('admin/<int:user_id>/', delete_user, name='delete_user'),
     path('admin/<int:user_id>/change-password/', change_user_password, name='change_user_password'),
+    
+    # Dashboard
+    path('dashboard/', dashboard, name='dashboard'),
 ]

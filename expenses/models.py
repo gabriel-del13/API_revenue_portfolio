@@ -10,6 +10,9 @@ class Expense(models.Model):
     description = models.TextField(null=False)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     expense_date = models.DateField()
+    is_deleted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Expense: {self.description} - {self.amount}"
+        return f"{self.name}: {self.description} - {self.amount}"

@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from decimal import Decimal, InvalidOperation
 from .models import Expense
 from .serializers import ExpenseSerializer
 from wallets.models import Wallet
@@ -13,7 +14,8 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         try:
             client = Client.objects.get(email=self.request.user.email)
-            queryset = Expense.objects.filter(client=client)
+            queryset = Expense.objects.filter(client=client, is_deleted=False)
+            
             wallet_id = self.request.query_params.get('wallet_id', None)
             if wallet_id:
                 queryset = queryset.filter(wallet_id=wallet_id)
@@ -26,11 +28,26 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         try:
             client = Client.objects.get(email=request.user.email)
             wallet_id = request.data.get('wallet')
-            amount = float(request.data.get('amount'))
+            amount_str = request.data.get('amount')
             
-            wallet = Wallet.objects.get(id=wallet_id, client=client)
+            try:
+                amount = Decimal(str(amount_str))
+            except (ValueError, InvalidOperation):
+                return Response(
+                    {"error": "Invalid amount format"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            if amount <= 0:
+                return Response(
+                    {"error": "Amount must be greater than 0"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            wallet = Wallet.objects.get(id=wallet_id, client=client, is_deleted=False)
             
             if wallet.balance >= amount:
+                # Crear el expense
                 expense = Expense.objects.create(
                     client=client,
                     wallet=wallet,
@@ -87,7 +104,21 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         
-        new_amount = serializer.validated_data.get('amount', old_amount)
+        new_amount_str = serializer.validated_data.get('amount', old_amount)
+        
+        try:
+            new_amount = Decimal(str(new_amount_str))
+            if new_amount <= 0:
+                return Response(
+                    {"error": "Amount must be greater than 0"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        except (ValueError, InvalidOperation):
+            return Response(
+                {"error": "Invalid amount format"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
         difference = new_amount - old_amount
         
         wallet = instance.wallet
@@ -122,5 +153,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         wallet.balance += instance.amount
         wallet.save()
         
-        self.perform_destroy(instance)
+        instance.is_deleted = True
+        instance.save()
+        
         return Response(status=status.HTTP_204_NO_CONTENT)
