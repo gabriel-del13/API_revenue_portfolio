@@ -366,6 +366,21 @@ Registra los gastos del usuario. Al crear un gasto, **automáticamente descuenta
 
 ## 5. **Dashboard**
 
+### Dashboard completo del año actual
+- **Endpoint:** `/users/dashboard/`
+- **Método:** `GET`
+- **Header:** `Authorization: Bearer <token>`
+
+### Dashboard de un año específico
+- **Endpoint:** `/users/dashboard/?year=2024`
+- **Método:** `GET`
+- **Header:** `Authorization: Bearer <token>`
+
+### Dashboard de un mes específico
+- **Endpoint:** `/users/dashboard/?year=2024&month=1`
+- **Método:** `GET`
+- **Header:** `Authorization: Bearer <token>`
+
 ## 6. **Admin Panel (Solo Administradores)**
 
 Endpoints especiales para administradores del sistema.
