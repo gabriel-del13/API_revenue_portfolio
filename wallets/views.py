@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.db import models  # AGREGAR ESTE IMPORT
+from django.db import models
 from decimal import Decimal, InvalidOperation
 from .models import Wallet, Transfer
 from .serializers import WalletSerializer, TransferSerializer
@@ -205,34 +205,22 @@ class WalletViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
     
-
-    @action(detail=True, methods=['get']) 
+    @action(detail=True, methods=['get'])
     def transfers(self, request, pk=None):
         try:
-            try:
-                target_wallet = self.get_object()
-                wallet_id = target_wallet.id
-            except Exception:
-                return Response(
-                    {"error": "Wallet not found or not accessible"},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-                
-            client = target_wallet.client 
-            transfers = Transfer.objects.filter(client=client).order_by('-transfer_date')
-            
-            transfers = transfers.filter(
-                models.Q(from_wallet_id=wallet_id) | models.Q(to_wallet_id=wallet_id)
-            )
+            wallet = self.get_object()
+            transfers = Transfer.objects.filter(
+                models.Q(from_wallet=wallet) | models.Q(to_wallet=wallet)
+            ).select_related('from_wallet', 'to_wallet').order_by('-transfer_date')
             
             serializer = TransferSerializer(transfers, many=True)
-            return Response(serializer.data)
+            return Response({
+                'count': transfers.count(),
+                'wallet_id': wallet.id,
+                'wallet_name': wallet.name,
+                'transfers': serializer.data
+            }, status=status.HTTP_200_OK)
             
-        except Client.DoesNotExist:
-            return Response(
-                {"error": "Client profile not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
         except Exception as e:
             return Response(
                 {"error": str(e)},
