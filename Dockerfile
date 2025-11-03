@@ -30,6 +30,7 @@ EXPOSE 8000
 
 # Script de inicio: collectstatic, migraciones y luego gunicorn + creación de superusuario
 CMD python manage.py collectstatic --no-input && \
+    python manage.py makemigrations && \
     python manage.py migrate && \
     python create_superuser.py && \
     gunicorn API_revenue_portfolio.wsgi:application --bind 0.0.0.0:8000 --workers 2
